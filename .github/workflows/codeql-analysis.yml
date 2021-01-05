@@ -58,8 +58,9 @@ jobs:
 
     # Autobuild attempts to build any compiled languages  (C/C++, C#, or Java).
     # If this step fails, then you should remove it and run the build manually (see below)
-#    - name: Autobuild
-#      uses: github/codeql-action/autobuild@v1
+    - name: Autobuild
+      if: matrix.language == 'javascript' 
+      uses: github/codeql-action/autobuild@v1
 
     # ℹ️ Command-line programs to run using the OS shell.
     # 📚 https://git.io/JvXDl
@@ -73,9 +74,11 @@ jobs:
     #   make release
       
     - name: Add MSBuild to PATH
+      if: matrix.language == 'csharp' 
       uses: microsoft/setup-msbuild@v1
 
 #    - name: Cache NuGet packages
+#      if: matrix.language == 'csharp' 
 #      uses: actions/cache@v2
 #      env:
 #        cache-name: Cache-NuGet-Packages
@@ -84,14 +87,16 @@ jobs:
 #        key: ${{ env.cache-name }}-${{ hashFiles('PartsUnlimited-aspnet45/src/PartsUnlimitedWebsite/packages.config') }}-${{ hashFiles('PartsUnlimited-aspnet45/test/PartsUnlimited.SeleniumTests/packages.config') }}-${{ hashFiles('PartsUnlimited-aspnet45/test/PartsUnlimited.UnitTests/packages.config') }}
 
     - name: Restore NuGet packages
+      if: matrix.language == 'csharp' 
       working-directory: ${{env.GITHUB_WORKSPACE}}
       run: nuget restore ${{env.SOLUTION_FILE_PATH}}
 
     - name: Build
+      if: matrix.language == 'csharp' 
       working-directory: ${{env.GITHUB_WORKSPACE}}
       # Add additional options to the MSBuild command line here (like platform or verbosity level).
       # See https://docs.microsoft.com/visualstudio/msbuild/msbuild-command-line-reference
-      run: msbuild /m /p:Configuration=${{env.BUILD_CONFIGURATION}} /p:PlatformTarget=${{ env.BUILD_PLATFORM }} ${{env.SOLUTION}} 
+      run: msbuild /m /p:Configuration=${{env.BUILD_CONFIGURATION}} /p:PlatformTarget=${{ env.BUILD_PLATFORM }} /p:UseSharedCompilation=false ${{env.SOLUTION}} 
 
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v1
