@@ -1,6 +1,6 @@
 # This is a basic workflow to help you get started with Actions
 
-name: Build_And_Deploy_To_Azure
+name: Build
 env:
   #ARM Template Parameters
   TAG_CICD_Engine_Name: GitHub Actions
