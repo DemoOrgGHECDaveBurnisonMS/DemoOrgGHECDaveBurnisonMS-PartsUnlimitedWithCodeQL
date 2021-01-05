@@ -28,8 +28,6 @@ jobs:
       # Path to the solution file relative to the root of the project.
       SOLUTION_FILE_PATH: 'PartsUnlimited-aspnet45'
       SOLUTION: 'PartsUnlimited-aspnet45/PartsUnlimited.sln'
-      ARTIFACT_STAGING_PATH: 'PartsUnlimited-aspnet45/src/PartsUnlimitedWebsite'
-      ARTIFACT_STAGING_FOLDER: 'bin/Website'
       # Configuration type to build.
       # You can convert this to a build matrix if you need coverage of multiple configuration types.
       # https://docs.github.com/actions/learn-github-actions/managing-complex-workflows#using-a-build-matrix
@@ -77,13 +75,13 @@ jobs:
     - name: Add MSBuild to PATH
       uses: microsoft/setup-msbuild@v1
 
-    - name: Cache NuGet packages
-      uses: actions/cache@v2
-      env:
-        cache-name: Cache-NuGet-Packages
-      with:
-        path: "PartsUnlimited-aspnet45/packages"
-        key: ${{ env.cache-name }}-${{ hashFiles('PartsUnlimited-aspnet45/src/PartsUnlimitedWebsite/packages.config') }}-${{ hashFiles('PartsUnlimited-aspnet45/test/PartsUnlimited.SeleniumTests/packages.config') }}-${{ hashFiles('PartsUnlimited-aspnet45/test/PartsUnlimited.UnitTests/packages.config') }}
+#    - name: Cache NuGet packages
+#      uses: actions/cache@v2
+#      env:
+#        cache-name: Cache-NuGet-Packages
+#      with:
+#        path: "PartsUnlimited-aspnet45/packages"
+#        key: ${{ env.cache-name }}-${{ hashFiles('PartsUnlimited-aspnet45/src/PartsUnlimitedWebsite/packages.config') }}-${{ hashFiles('PartsUnlimited-aspnet45/test/PartsUnlimited.SeleniumTests/packages.config') }}-${{ hashFiles('PartsUnlimited-aspnet45/test/PartsUnlimited.UnitTests/packages.config') }}
 
     - name: Restore NuGet packages
       working-directory: ${{env.GITHUB_WORKSPACE}}
@@ -93,7 +91,7 @@ jobs:
       working-directory: ${{env.GITHUB_WORKSPACE}}
       # Add additional options to the MSBuild command line here (like platform or verbosity level).
       # See https://docs.microsoft.com/visualstudio/msbuild/msbuild-command-line-reference
-      run: msbuild /m /p:Configuration=${{env.BUILD_CONFIGURATION}} /p:PlatformTarget=${{ env.BUILD_PLATFORM }} /p:DeployOnBuild=true /p:DeployDefaultTarget=WebPublish /p:WebPublishMethod=FileSystem /p:DeleteExistingFiles=True /p:publishUrl="${{env.GITHUB_WORKSPACE}}/${{env.ARTIFACT_STAGING_PATH}}/${{env.ARTIFACT_STAGING_FOLDER}}" ${{env.SOLUTION}} 
+      run: msbuild /m /p:Configuration=${{env.BUILD_CONFIGURATION}} /p:PlatformTarget=${{ env.BUILD_PLATFORM }} ${{env.SOLUTION}} 
 
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v1
